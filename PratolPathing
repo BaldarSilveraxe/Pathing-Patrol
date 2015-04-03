@@ -1,0 +1,319 @@
+var PratolPathing = PratolPathing || (function(){
+    'use strict';
+ 
+    var version = 0.1,
+    
+    recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
+    recordSheetName1 = 'Partol-Record-Sheet',
+    recordSheetAbility1 = [
+        {istokenaction: true,   action: '!pathRepresents',     name: 'Relate to a Token'},
+    ],
+    recordSheetId1,
+    
+    lastTop = '',
+    lastLeft = '',
+    lastTileNumber = '',
+    lastVflip = false,
+    lastHflip = false,
+    lastRotation = '',
+    lastName = '',
+    lastId = '',
+    
+    mainDivStyle = ' style="border: 1px solid black; background-color: white; padding: 0px 0px;"',
+    tablDivStyle = ' style="display: table;"',
+    trowDivStyle = ' style="display: table-row;"',
+    cellDivStyle = ' style="display: table-cell; border-collapse: collapse; padding-left: 0px; padding-right: 0px;"',
+    atagOneStyle = ' style="border: 1px solid AliceBlue; background-color: SteelBlue; color: white;"',
+    atagTwoStyle = ' style="border: 1px solid AliceBlue; background-color: DarkCyan; color: white;"',
+    atagThrStyle = ' style="border: 1px solid AliceBlue; background-color: Maroon; color: white;"',
+    imagDivStyle = ' style="padding: 0px 0px 0px 0px; outline: none; border: none;"',
+    spanOneStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
+    spanTwoStyle = ' style="color:LemonChiffon; font-weight:normal; display:block; width: 150px;"',
+    
+    pathTiles,
+    
+    handleInput = function(msg) {
+        var msg = _.clone(msg), args, obj, playerid;
+        
+        if ( 'api' !== msg.type ) {return; }
+        
+        args = msg.content.split(/\s+/);
+        obj =  _.first(msg.selected);
+        playerid = msg.playerid;
+        
+        switch(args[0]) {
+            case '!mainmenu': mainmenu(); return;
+            case '!patrolPathSubMenu': submenu(args[1], 'Start Points'); return;
+            case '!addpath': addpath(args[1], 'Start Points'); return;
+            case '!pathRepresents': pathRepresents(obj); return;
+        };
+        return;
+    },
+    
+    handleGraphicChange = function(obj) {
+        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')});
+        
+        //Return if its not a path tile
+        if(0 === tileData.length){return;}
+        
+        //capture data on last tile'
+        lastLeft = obj.get('left');
+        lastTop = obj.get('top');
+        lastTileNumber = tileData[0].tileNumber,
+        lastVflip = obj.get('flipv');
+        lastHflip = obj.get('fliph');
+        lastRotation = obj.get('rotation');
+        
+        if(obj.get('name') === 'newGraphic'){
+            obj.set('name', lastTileNumber);
+            //do soemthing else with newly added
+        }else{
+            //do something with changed
+        }
+        
+        lastName = lastTileNumber;
+        lastId = obj.get('id');
+    },
+    
+    handleGraphicDestroy = function(obj) {
+        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')});
+        
+        //Return if its not a path tile
+        if(0 === tileData.length){return;}
+        
+        //Go back to center if "last" is destroyed
+        if(obj.get('id') === lastId){
+            lastTop = '';
+            lastLeft = '';
+            lastTileNumber = '';
+            lastVflip = false;
+            lastHflip = false;
+            lastRotation = '';
+            lastName = '';
+            lastId = '';
+        }
+    },
+    
+    pathRepresents = function(obj) {
+        //Relate token to path (needs work)
+        log(obj);
+        sendChat('APi','Objectlogged')
+    },
+    
+    addpath = function(tile) {
+        var currentPageId = Campaign().get('playerpageid'), 
+            currentPage = getObj('page', currentPageId), 
+            center, 
+            middle, 
+            newGraphic,
+            pathData,
+            placeData,
+            tileData = _.where(pathTiles, {tileNumber: tile});
+            
+            if('' === lastTop || '' === lastLeft){
+                center = (Math.floor(currentPage.get('width') / 2) * 70) - 35;
+                middle = (Math.floor(currentPage.get('height') / 2) * 70) - 35;
+                lastLeft = center;
+                lastTop = middle;
+            }else{
+                //Need to get proper placement currently forcing left
+                center = lastLeft;
+                middle = lastTop;
+            }
+            
+            pathData = {
+                center: center,
+                middle: middle,
+                tileNumber: tileData[0].tileNumber,
+                isStart: tileData[0].isStart,
+                isEnd: tileData[0].isEnd,
+                isbiDir: tileData[0].isbiDir,
+                favorFrom: tileData[0].favorFrom,
+                favorTo: tileData[0].favorTo,
+                lastTop: lastTop,
+                lastLeft: lastLeft,
+                lastTileNumber: lastTileNumber,
+                lastVflip: lastVflip,
+                lastHflip: lastHflip,
+                lastRotation: lastRotation,
+                lastName: lastName,
+                lastId: lastId,
+            };
+            
+            placeData = findPlacement(pathData);
+            
+            //Stay within the size of the map
+            if(false === checkOffMap(placeData.center, placeData.middle, currentPage.get('width'), currentPage.get('height'))){
+                placeData.center = lastLeft;
+                placeData.middle = lastTop;
+            }
+            
+            newGraphic = createObj('graphic', {
+                type: 'graphic', 
+                subtype: 'token', 
+                pageid: currentPageId, 
+                layer: 'gmlayer',
+                width: 70,
+                height: 70,
+                left: placeData.center, 
+                top: placeData.middle,
+                rotation: placeData.bestRotation,
+                imgsrc: tileData[0].url,
+                represents: tileData[0].isStart ? recordSheetId1 : '',
+                name: 'newGraphic'
+            });
+    },
+    
+    findPlacement = function(pathData) {
+        var center = pathData.center,
+            middle = pathData.middle,
+            lastAngle = fixAngle(pathData.lastRotation),
+            lasttileData = _.where(pathTiles, {tileNumber: lastName}),
+            LastTilePoints, 
+            lastTileWas,
+            bestRotation;
+            
+            if(0 === lasttileData.length){
+                LastTilePoints = 90;
+            }else{
+                LastTilePoints = fixAngle(lasttileData[0].favorTo + lastAngle);
+            }
+            
+            switch(LastTilePoints) {
+                case 0:
+                    middle -= 70;
+                break;
+                case 45:
+                    center += 70;
+                    middle -= 70;
+                break;
+                case 90:
+                    center += 70;
+                break;
+                case 135:
+                    center += 70;
+                    middle += 70;
+                break;
+                case 180:
+                    middle += 70;
+                break;
+                case 225:
+                    center -= 70;
+                    middle += 70;
+                break;
+                case 270:
+                    center -= 70;
+                break;
+                case 315:
+                    center -= 70;
+                    middle -= 70;
+                break;
+            }
+            
+            lastTileWas = fixAngle(LastTilePoints - 180);
+            pathData.favorFrom = fixAngle((pathData.favorFrom * -1) + lastTileWas);
+            
+        return {
+            center: center, 
+            middle: middle,
+            bestRotation: pathData.favorFrom
+        };
+    },
+    
+    fixAngle = function(angle){
+        return (Math.round(angle/45)*45)%360 + (angle<0 ? 360 : 0);
+    },
+    
+    checkOffMap = function(center, middle, width, height) {
+        if(center > (width * 70) || middle > (height * 70)){
+            return false;
+        }
+        return true;
+    },
+    
+    mainmenu = function() {
+        sendChat('Patrol Paths', ' ');
+        sendChat('Main Menu', '/direct '
+            +'<br><a href="!patrolPathSubMenu StartPoints"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Paths Start</span></a>'
+            +'<br><a href="!patrolPathSubMenu SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Single Paths</span></a>'
+            +'<br><a href="!patrolPathSubMenu BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Bi-Direction Paths</span></a>'
+            );
+        
+    },
+    
+    submenu = function(menu, heading) {
+        var i = 0, tableText, tileData = _.where(pathTiles, {menu: menu});
+        
+        sendChat('Patrol Paths Tiles', ' ');
+        tableText = ''
+            +'<div' + tablDivStyle + '>';
+        while (i < tileData.length) {     
+            tableText += '<div' + trowDivStyle + '>'
+                        +'<div' + cellDivStyle + '>'
+                                +'<a title="' + tileData[i].des + '" href="!addpath ' + tileData[i].tileNumber + '" ' + atagOneStyle + '>'
+                                +'<img src="' + tileData[i].url
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                                +'</a>'
+                        +'</div>'
+                    +'</div>'
+            i = i + 1;
+        }
+        tableText += '</div>';
+        sendChat(heading, '/direct ' + tableText + '<br><a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
+    },
+    
+    partolRecordSheet = function(name, avatar, abilities) {
+        var controllerSheet = findObjs({ _type: 'character', name: name}), controllerSheetId,
+            controllerAbility;
+            
+        if (0 === controllerSheet.length) { 
+            controllerSheetId = createObj('character', {name: name, avatar: avatar}).get('_id');
+        }else{
+            controllerSheetId = controllerSheet[0].get('_id');
+        }
+        
+        recordSheetId1 = controllerSheetId;
+        
+        _.each(abilities, function(abilitiy) {
+            controllerAbility = findObjs({ 
+                _type: 'ability', 
+                name: abilitiy.name, 
+                characterid: controllerSheetId,
+            });
+            if (controllerAbility.length === 0) {
+                createObj('ability', {
+                    name: abilitiy.name, 
+                    characterid: controllerSheetId,
+                    action: abilitiy.action,
+                    istokenaction: abilitiy.istokenaction
+                }); 
+            }
+        });
+    },
+      
+    checkInstall = function() {
+        partolRecordSheet(recordSheetName1, recordSheetAvatar1, recordSheetAbility1);
+        
+        pathTiles = pathTilesArray;
+        
+	},
+ 
+    registerEventHandlers = function() {
+        on('chat:message', handleInput);
+        on('change:graphic', handleGraphicChange);
+        on('destroy:graphic', handleGraphicDestroy);
+        checkInstall();
+    };
+	return {
+        CheckInstall: checkInstall,
+		RegisterEventHandlers: registerEventHandlers
+	};
+    
+}());
+ 
+on('ready',function(){
+	'use strict';
+    PratolPathing.RegisterEventHandlers();
+});
+      
+      
