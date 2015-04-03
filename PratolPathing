@@ -30,6 +30,16 @@ var PratolPathing = PratolPathing || (function(){
     spanOneStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
     spanTwoStyle = ' style="color:LemonChiffon; font-weight:normal; display:block; width: 150px;"',
     
+    keypad999 = 'https://s3.amazonaws.com/files.d20.io/images/8629801/ZvePZ9kLXb0nvGlwqXKxDA/thumb.png?1428086304',
+    keypad000 = 'https://s3.amazonaws.com/files.d20.io/images/8629802/oLDBpf2Bqvsj_RkSYdA_FQ/thumb.png?1428086304',
+    keypad045 = 'https://s3.amazonaws.com/files.d20.io/images/8629803/-ivqrH-5FkfRu7zgZDMU9w/thumb.png?1428086304',
+    keypad090 = 'https://s3.amazonaws.com/files.d20.io/images/8629808/8jKMx3_togBTjWKs4VqkcA/thumb.png?1428086306',
+    keypad135 = 'https://s3.amazonaws.com/files.d20.io/images/8629807/jahlhsEuNELcEuNF2CGTVg/thumb.png?1428086305',
+    keypad180 = 'https://s3.amazonaws.com/files.d20.io/images/8629804/Um924NqdUFa8QZtdA1I2Og/thumb.png?1428086305',
+    keypad225 = 'https://s3.amazonaws.com/files.d20.io/images/8629805/ZPibKIiAIwI8SE77fy9MeQ/thumb.png?1428086305',
+    keypad270 = 'https://s3.amazonaws.com/files.d20.io/images/8629806/Gnbw-_Au_cUqqEgYho5yuw/thumb.png?1428086305',
+    keypad315 = 'https://s3.amazonaws.com/files.d20.io/images/8629800/ftF3gGJeb4TDzPVcWddZGw/thumb.png?1428086304',
+    
     pathTiles,
     
     handleInput = function(msg) {
@@ -43,8 +53,9 @@ var PratolPathing = PratolPathing || (function(){
         
         switch(args[0]) {
             case '!mainmenu': mainmenu(); return;
-            case '!patrolPathSubMenu': submenu(args[1], 'Start Points'); return;
-            case '!addpath': addpath(args[1], 'Start Points'); return;
+            case '!patrolPathSubMenu': submenu(args[1], 'Single Direction'); return;
+            case '!patrolPathKeypad': submenuKeypad(args[1], 'Single Path Keypad'); return;
+            case '!addpath': addpath(args[1], 'Bi-Direction'); return;
             case '!pathRepresents': pathRepresents(obj); return;
         };
         return;
@@ -174,7 +185,7 @@ var PratolPathing = PratolPathing || (function(){
             bestRotation;
             
             if(0 === lasttileData.length){
-                LastTilePoints = 90;
+                LastTilePoints = 0;
             }else{
                 LastTilePoints = fixAngle(lasttileData[0].favorTo + lastAngle);
             }
@@ -234,10 +245,61 @@ var PratolPathing = PratolPathing || (function(){
     mainmenu = function() {
         sendChat('Patrol Paths', ' ');
         sendChat('Main Menu', '/direct '
-            +'<br><a href="!patrolPathSubMenu StartPoints"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Paths Start</span></a>'
-            +'<br><a href="!patrolPathSubMenu SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Single Paths</span></a>'
-            +'<br><a href="!patrolPathSubMenu BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Patrol Bi-Direction Paths</span></a>'
+            +'<br><a href="!patrolPathKeypad SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths Keypad</span></a>'
+            +'<br><a href="!patrolPathSubMenu SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Path Tiles</span></a>'
+            +'<br><a href="!patrolPathSubMenu BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Path Tiles</span></a>'
             );
+        
+    },
+    
+    submenuKeypad = function(menu, heading) {
+        var tableText;
+        
+        sendChat('Patrol Paths', ' ');
+        tableText = ''
+            +'<div' + tablDivStyle + '>';
+        tableText += '<div' + trowDivStyle + '>'    
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad315 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad000 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad045 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                    +'</div>';
+        tableText += '<div' + trowDivStyle + '>'    
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad270 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad999 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
+                                +'<img src="' + keypad090 + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                    +'</div>';
+        tableText += '</div>';    
+        sendChat(heading, '/direct ' + tableText + '<br><a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
         
     },
     
