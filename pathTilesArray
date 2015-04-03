@@ -1,0 +1,195 @@
+var pathTilesArray = (function () {
+    var pathTiles = new Array;
+
+    pathTiles = [
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608954/Xq2WPh5b8T2eF2044DfIvw/thumb.png?1427997430',
+    des: 'Start, Single, On Return Straight',
+    tileNumber: 'TN000',
+    isStart: true,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608950/AGuhFqIhJVLhAWYJOoozqg/thumb.png?1427997429',
+    des: 'Start, Single, On Return Pause Straight',
+    tileNumber: 'TN001',
+    isStart: true,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608948/t9G2c71A0k3qjpTcZs9yOg/thumb.png?1427997429',
+    des: 'Start, Single, On Return Stop',
+    tileNumber: 'TN002',
+    isStart: true,
+    isEnd: true,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608957/bXyVaTINxihhZhpeN_ELCw/thumb.png?1427997430',
+    des: 'Start, Bi-Directional, On Return Straight',
+    tileNumber: 'TN003',
+    isStart: true,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608960/6V15hkUSNvsamwq7g8rmIQ/thumb.png?1427997432',
+    des: 'Start, Bi-Directional, On Return Pause Straight',
+    tileNumber: 'TN004',
+    isStart: true,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'StartPoints',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608956/VPxIr5KfdhM9NyPXLaNv2Q/thumb.png?1427997430',
+    des: 'Start, Bi-Directional, On Return Stop',
+    tileNumber: 'TN005',
+    isStart: true,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608947/nVPxzAggcfAgCfSF1KEuOw/thumb.png?1427997429',
+    des: 'Path, Single, Straight',
+    tileNumber: 'TN006',
+    isStart: false,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608951/Oi_xGHd8WYp3ZSedHXUG0w/thumb.png?1427997429',
+    des: 'Path, Single, Turn, Left',
+    tileNumber: 'TN007',
+    isStart: false,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 0,
+    favorTo: 90
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8626004/SJ5F6hBW04vc1VSCdVIkNw/thumb.png?1428075804',
+    des: 'Path, Single, Turn, Right',
+    tileNumber: 'TN008',
+    isStart: false,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 0,
+    favorTo: 270
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608961/RY5AuQZTh7un1eQ_gAU--Q/thumb.png?1427997432',
+    des: 'Path, Single, Cross',
+    tileNumber: 'TN009',
+    isStart: false,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608949/bRBt4U_2rW1MIYrTszGbpQ/thumb.png?1427997429',
+    des: 'Path, Single, Pause',
+    tileNumber: 'TN010',
+    isStart: false,
+    isEnd: false,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'SinglePaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608958/ktzFbxoSP3y2dtA05bKQ3Q/thumb.png?1427997432',
+    des: 'Path, Single, Stop',
+    tileNumber: 'TN011',
+    isStart: false,
+    isEnd: true,
+    isbiDir: false,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'BiPaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608953/Q44FOQL2CTEDUgvEBnhRBw/thumb.png?1427997430',
+    des: 'Path, Bi-Direction, Straight',
+    tileNumber: 'TN012',
+    isStart: false,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'BiPaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608959/sjh-32cjDTTJ10SEmDg-PA/thumb.png?1427997432',
+    des: 'Path, Bi-Direction, Turn, Right',
+    tileNumber: 'TN013',
+    isStart: false,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 90,
+    favorTo: 0
+    },
+    {
+    menu: 'BiPaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8625998/uJBQAmz7RerzC-XclfHu3w/thumb.png?1428075792',
+    des: 'Path, Bi-Direction, Turn, Left',
+    tileNumber: 'TN014',
+    isStart: false,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 0
+    },
+    {
+    menu: 'BiPaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608955/5fy9HHU0xRgOIIJNvwJQRw/thumb.png?1427997430',
+    des: 'Path, Bi-Direction, Cross',
+    tileNumber: 'TN015',
+    isStart: false,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 90
+    },
+    {
+    menu: 'BiPaths',
+    url: 'https://s3.amazonaws.com/files.d20.io/images/8608962/jMG9YANA02AqWgniMIV7Ng/thumb.png?1427997432',
+    des: 'Path, Bi-Direction, U-Turn',
+    tileNumber: 'TN016',
+    isStart: false,
+    isEnd: false,
+    isbiDir: true,
+    favorFrom: 270,
+    favorTo: 270
+    }
+    ];
+    
+    return pathTiles;
+}());
