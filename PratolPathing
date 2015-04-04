@@ -24,11 +24,11 @@ var PratolPathing = PratolPathing || (function(){
     trowDivStyle = ' style="display: table-row;"',
     cellDivStyle = ' style="display: table-cell; border-collapse: collapse; padding-left: 0px; padding-right: 0px;"',
     atagOneStyle = ' style="border: 1px solid AliceBlue; background-color: SteelBlue; color: white;"',
-    atagTwoStyle = ' style="border: 1px solid AliceBlue; background-color: DarkCyan; color: white;"',
+    atagTwoStyle = ' style="border: 1px solid Black; background-color: White; color: black;"',
     atagThrStyle = ' style="border: 1px solid AliceBlue; background-color: Maroon; color: white;"',
     imagDivStyle = ' style="padding: 0px 0px 0px 0px; outline: none; border: none;"',
     spanOneStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
-    spanTwoStyle = ' style="color:LemonChiffon; font-weight:normal; display:block; width: 150px;"',
+    spanTwoStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
     
     keypad999 = 'https://s3.amazonaws.com/files.d20.io/images/8629801/ZvePZ9kLXb0nvGlwqXKxDA/thumb.png?1428086304',
     keypad000 = 'https://s3.amazonaws.com/files.d20.io/images/8629802/oLDBpf2Bqvsj_RkSYdA_FQ/thumb.png?1428086304',
@@ -245,64 +245,114 @@ var PratolPathing = PratolPathing || (function(){
     mainmenu = function() {
         sendChat('Patrol Paths', ' ');
         sendChat('Main Menu', '/direct '
-            +'<br><a href="!patrolPathKeypad SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths Keypad</span></a>'
-            +'<br><a href="!patrolPathSubMenu SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Path Tiles</span></a>'
-            +'<br><a href="!patrolPathSubMenu BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Path Tiles</span></a>'
+            +'<br><a href="!patrolPathKeypad SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths</span></a>'
+            +'<br><a href="!patrolPathKeypad BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Paths</span></a>'
             );
         
     },
     
     submenuKeypad = function(menu, heading) {
-        var tableText;
+        var tableText, tileData = _.where(pathTiles, {menu: menu});
         
         sendChat('Patrol Paths', ' ');
         tableText = ''
             +'<div' + tablDivStyle + '>';
         tableText += '<div' + trowDivStyle + '>'    
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad315 + '"'
+                            +'<a title="' + tileData[4].des + '" href="!addpath ' + tileData[4].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[4].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad000 + '"'
+                            +'<a title="' + tileData[5].des + '" href="!addpath ' + tileData[5].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[5].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad045 + '"'
+                            +'<a title="' + tileData[6].des + '" href="!addpath ' + tileData[6].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[6].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                     +'</div>';
         tableText += '<div' + trowDivStyle + '>'    
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad270 + '"'
+                            +'<a title="' + tileData[3].des + '" href="!addpath ' + tileData[3].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[3].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad999 + '"'
+                            +'<a title="" href="!Blank" ' + atagTwoStyle + '>'
+                                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6565524/yTHHF5NwFJcd0ddZ-9nyxg/thumb.png?1417619728"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                         +'<div' + cellDivStyle + '>'
-                            +'<a title="1" href="!command" ' + atagOneStyle + '>'
-                                +'<img src="' + keypad090 + '"'
+                            +'<a title="' + tileData[7].des + '" href="!addpath ' + tileData[7].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[7].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                             +'</a>'
                         +'</div>'
                     +'</div>';
-        tableText += '</div>';    
+        tableText += '<div' + trowDivStyle + '>'    
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[0].des + '" href="!addpath ' + tileData[0].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[0].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[1].des + '" href="!addpath ' + tileData[1].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[1].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[2].des + '" href="!addpath ' + tileData[2].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[2].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                    +'</div>';
+        tableText += '</div>';
+        tableText += '<div' + trowDivStyle + '>'    
+                        +'<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[9].des + '" href="!addpath ' + tileData[9].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[9].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>';
+        if('SinglePaths' === menu) {              
+            tableText += '<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[10].des + '" href="!addpath ' + tileData[10].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[10].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+        }else{
+            tableText += '<div' + cellDivStyle + '>'
+                            +'<a title="" href="!Blank" ' + atagTwoStyle + '>'
+                                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6565524/yTHHF5NwFJcd0ddZ-9nyxg/thumb.png?1417619728"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+        }                
+            tableText += '<div' + cellDivStyle + '>'
+                            +'<a title="' + tileData[8].des + '" href="!addpath ' + tileData[8].tileNumber + '" ' + atagTwoStyle + '>'
+                                +'<img src="' + tileData[8].url + '"'
+                                +' height="70" width="70" border="0"' + imagDivStyle + '">'
+                            +'</a>'
+                        +'</div>'
+                    +'</div>';
+        tableText += '</div>';
         sendChat(heading, '/direct ' + tableText + '<br><a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
         
     },
     
+    //This will need changed
     submenu = function(menu, heading) {
         var i = 0, tableText, tileData = _.where(pathTiles, {menu: menu});
         
@@ -313,7 +363,7 @@ var PratolPathing = PratolPathing || (function(){
             tableText += '<div' + trowDivStyle + '>'
                         +'<div' + cellDivStyle + '>'
                                 +'<a title="' + tileData[i].des + '" href="!addpath ' + tileData[i].tileNumber + '" ' + atagOneStyle + '>'
-                                +'<img src="' + tileData[i].url
+                                +'<img src="' + tileData[i].url + '"'
                                 +' height="70" width="70" border="0"' + imagDivStyle + '">'
                                 +'</a>'
                         +'</div>'
