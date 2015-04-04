@@ -190,30 +190,33 @@ var PratolPathing = PratolPathing || (function(){
         sendChat('Patrol Paths', ' ');
         tableText = '<div' + tablDivStyle + '>';
         tableText += '<div' + trowDivStyle + '>';
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[3].des, tileData[3].tileNumber, atagTwoStyle, tileData[3].url, imagDivStyle);
         tableText += makeKeypadDivCell(cellDivStyle, tileData[4].des, tileData[4].tileNumber, atagTwoStyle, tileData[4].url, imagDivStyle);
         tableText += makeKeypadDivCell(cellDivStyle, tileData[5].des, tileData[5].tileNumber, atagTwoStyle, tileData[5].url, imagDivStyle);
-        tableText += makeKeypadDivCell(cellDivStyle, tileData[6].des, tileData[6].tileNumber, atagTwoStyle, tileData[6].url, imagDivStyle);
         tableText += '</div>';
         tableText += '<div' + trowDivStyle + '>';
-        tableText += makeKeypadDivCell(cellDivStyle, tileData[3].des, tileData[3].tileNumber, atagTwoStyle, tileData[3].url, imagDivStyle);
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[2].des, tileData[2].tileNumber, atagTwoStyle, tileData[2].url, imagDivStyle);
         tableText += makeKeypadDivCell(cellDivStyle, '', 'BLANK', atagTwoStyle, 'https://s3.amazonaws.com/files.d20.io/images/6565524/yTHHF5NwFJcd0ddZ-9nyxg/thumb.png?1417619728', imagDivStyle);
-        tableText += makeKeypadDivCell(cellDivStyle, tileData[7].des, tileData[7].tileNumber, atagTwoStyle, tileData[7].url, imagDivStyle);
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[6].des, tileData[6].tileNumber, atagTwoStyle, tileData[6].url, imagDivStyle);
         tableText += '</div>';
         tableText += '</div>';
         tableText += '<div' + trowDivStyle + '>';
         tableText += makeKeypadDivCell(cellDivStyle, tileData[0].des, tileData[0].tileNumber, atagTwoStyle, tileData[0].url, imagDivStyle);
         tableText += makeKeypadDivCell(cellDivStyle, tileData[1].des, tileData[1].tileNumber, atagTwoStyle, tileData[1].url, imagDivStyle);
-        tableText += makeKeypadDivCell(cellDivStyle, tileData[2].des, tileData[2].tileNumber, atagTwoStyle, tileData[2].url, imagDivStyle);
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[7].des, tileData[7].tileNumber, atagTwoStyle, tileData[7].url, imagDivStyle);
         tableText += '</div>';
         tableText += '<div' + trowDivStyle + '>';
-        tableText += makeKeypadDivCell(cellDivStyle, tileData[9].des, tileData[9].tileNumber, atagTwoStyle, tileData[9].url, imagDivStyle);
-        if( 'SinglePaths' === menu ) { 
-            tableText += makeKeypadDivCell(cellDivStyle, tileData[10].des, tileData[10].tileNumber, atagTwoStyle, tileData[10].url, imagDivStyle);
-        }else{
-            tableText += makeKeypadDivCell(cellDivStyle, '', 'BLANK', atagTwoStyle, 'https://s3.amazonaws.com/files.d20.io/images/6565524/yTHHF5NwFJcd0ddZ-9nyxg/thumb.png?1417619728', imagDivStyle);
-        }
         tableText += makeKeypadDivCell(cellDivStyle, tileData[8].des, tileData[8].tileNumber, atagTwoStyle, tileData[8].url, imagDivStyle);
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[9].des, tileData[9].tileNumber, atagTwoStyle, tileData[9].url, imagDivStyle);
+        tableText += makeKeypadDivCell(cellDivStyle, tileData[10].des, tileData[10].tileNumber, atagTwoStyle, tileData[10].url, imagDivStyle);
         tableText += '</div>';
+        if( 'SinglePaths' === menu ) { 
+            tableText += '<div' + trowDivStyle + '>';
+            tableText += makeKeypadDivCell(cellDivStyle, tileData[11].des, tileData[11].tileNumber, atagTwoStyle, tileData[11].url, imagDivStyle);
+            tableText += makeKeypadDivCell(cellDivStyle, tileData[12].des, tileData[12].tileNumber, atagTwoStyle, tileData[12].url, imagDivStyle);
+            tableText += makeKeypadDivCell(cellDivStyle, tileData[13].des, tileData[13].tileNumber, atagTwoStyle, tileData[13].url, imagDivStyle);
+            tableText += '</div>';       
+        }
         tableText += '</div>';
         sendChat(heading, '/direct ' + tableText + '<br><a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
     },
