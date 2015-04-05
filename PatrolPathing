@@ -1,14 +1,14 @@
 var PatrolPathing = PatrolPathing || (function(){
     'use strict';
  
-    var version = 0.1,
+    var version = 0.2,
     lastUpdate = 1428220800, //Unix timestamp
-    schemaVersion = 0.1,
+    schemaVersion = 0.2,
     
     recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
     recordSheetName1 = 'Partol-Record-Sheet',
     recordSheetAbility1 = [
-        {istokenaction: true,   action: '!pathRepresents',     name: 'Relate to a Token'}
+        {istokenaction: true,   action: '!pathRepresents @{selected|token_id} @{target|token_id}',     name: 'Relate to a Token'}
     ],
     recordSheetId1,
     
@@ -33,35 +33,135 @@ var PatrolPathing = PatrolPathing || (function(){
     spanTwoStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
     
     pathTiles,
-
-    pathRepresents = function(message) {
-        var args = message.content.split(/\s+/),
-            target,
+    
+    clearRelationshipsSingle = function(message) {
+        var obj = _.first(message.selected),
             selected,
-            tokenInfomration, 
-            pathStartId;
+            selectedGreen;
             
-        if( 3 > args.length ){
-            log('Error: ( 3 > args.length ) @ pathRepresents = function(message)');
+        if ( null == obj) {
+            sendChat('','/direct '
+                +'<div style="padding:1px 3px;border: 1px solid #9F6000; background: #FEEFB3; color: #9F6000; font-size: 80%;">'
+                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422879/M-oWEvMt1bhC2M-bdi28tA/thumb.png?1416499678" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
+                +'You must Select a token that is related (<b>green status "dot."</b>)</div>'
+                );
+            return; 
+        }
+        selected = getObj('graphic', obj._id);
+        selectedGreen = false === selected.get('status_green') ? false : true;
+        
+        if ( false === selectedGreen) {
+            sendChat('','/direct '
+                +'<div style="padding:1px 3px;border: 1px solid #9F6000; background: #FEEFB3; color: #9F6000; font-size: 80%;">'
+                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422879/M-oWEvMt1bhC2M-bdi28tA/thumb.png?1416499678" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
+                +'You must Select a token that is related (<b>green status "dot."</b>)</div>'
+                );
             return; 
         }
         
-        target = getObj('graphic', args[1]);
-        selected = getObj('graphic', args[2]);
+        sendChat('api', 'clear just one.')
+    },
+
+    pathRepresents = function(message) {
+        var args = message.content.split(/\s+/),
+            targeted,
+            selected,
+            pathDataState,
+            foundInStateSelected,
+            foundInStateTargeted,
+            selectedGreen,
+            targetedGreen;
+            
+        if( 3 > args.length ){
+            log('Error: (3 > args.length) @ pathRepresents = function(message)');
+            return; 
+        }
         
-        if ((null == target) || (null == selected)) {
+        selected = getObj('graphic', args[1]);
+        targeted = getObj('graphic', args[2]);
+        
+        if ( 0 === _.where(pathTiles, {tileNumber: selected.get('name')}).length ) {return; }
+        if ( 0 !== _.where(pathTiles, {tileNumber: targeted.get('name')}).length ) {return; }
+        
+        if ( (null == selected) || (null == targeted) ) {
             log('Error: ((null == target) || (null == selected)) @ pathRepresents = function(message)');
             return; 
         }
         
-        log(target)
-        log(selected)
-        tokenInfomration = [
-            {
-                tokenId: args[1],
-            represents: ''} 
-            ];
-        pathStartId = args[2];
+        pathDataState = state.PatrolPathing.pathData;
+        foundInStateSelected = 0 < _.where(pathDataState, {pathsId: selected.get('id')}).length ? true : false;
+        foundInStateTargeted = 0 < _.where(pathDataState, {tokenId: targeted.get('id')}).length ? true : false;
+        selectedGreen = false === selected.get('status_green') ? false : true;
+        targetedGreen = false === targeted.get('status_green') ? false : true;
+        
+        if ( (false === foundInStateSelected) && (false === foundInStateTargeted) ) {
+            state.PatrolPathing.pathData.push(
+                {
+                    pathsId: selected.get('id'),
+                    tokenId: targeted.get('id')
+                });
+            foundInStateSelected = true;
+            foundInStateTargeted = true;
+        }else{
+            if ( true === foundInStateSelected ) {
+                sendChat('Select Warning','/direct '
+                +'<div style="padding:1px 3px;border: 1px solid #FF0000; background: #FFBABA; color: #D8000C; font-size: 80%;">'
+                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422880/SIjBHWJNC8f9a73Rg_VkOQ/thumb.png?14164996807" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
+                +'<b>Selected Start Path</b> already related to a token.'
+                );
+            }
+            
+            if ( true === foundInStateTargeted ) {
+                sendChat('Target Warning','/direct '
+                +'<div style="padding:1px 3px;border: 1px solid #FF0000; background: #FFBABA; color: #D8000C; font-size: 80%;">'
+                +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422880/SIjBHWJNC8f9a73Rg_VkOQ/thumb.png?14164996807" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
+                +'<b>Targeted Token</b> already related to a start path.'
+                );
+            }
+            sendChat('Patrol Paths', '/direct <a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
+        }
+        
+        //Maintain green status parity with state.
+        if ( selectedGreen !== foundInStateSelected ) {
+            selected.set('status_green', foundInStateSelected);
+        }
+        if ( targetedGreen !== foundInStateTargeted ) {
+            targeted.set('status_green', foundInStateTargeted);
+        }
+    },
+    
+    clearRelationships = function(message) {
+        var args = message.content.split(/\s+/),
+            gmObjects;
+        
+        if( 'y' !== args[1].toLowerCase() ) {return; }
+        
+        log('PatrolPathing: Resetting state');
+        
+        state.PatrolPathing = {
+            version: schemaVersion,
+            playersCanuse_ids: false,
+            pathData: []
+		};
+        
+        log(state.PatrolPathing);
+        
+        gmObjects = findObjs({
+            _pageid: Campaign().get('playerpageid'),
+            _type: 'graphic',
+            layer: 'gmlayer',
+        });
+        
+        _.each(gmObjects, function(obj) {
+                obj.set('status_green', false);
+        });
+        
+        sendChat('Relationships Cleared','/direct '
+            +'<div style="padding:1px 3px;border: 1px solid #00529B; background: #BDE5F8; color: #00529B; font-size: 80%;">'
+            +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422881/TSnHqUi-Y3TjRjqM1P_GsQ/thumb.png?1416499690" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
+            +'Relationships Cleared.</div>'
+            );
+        sendChat('Patrol Paths', '/direct <a href="!mainmenu"' + atagThrStyle + '><span ' + spanOneStyle + '>Main Menu</span></a>');
     },
     
     checkOffMap = function(center, middle, width, height) {
@@ -253,6 +353,8 @@ var PatrolPathing = PatrolPathing || (function(){
         sendChat('Main Menu', '/direct '
             +'<br><a href="!patrolPathKeypad SinglePaths Single"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths</span></a>'
             +'<br><a href="!patrolPathKeypad BiPaths Bi-Directional"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Paths</span></a>'
+            +'<br><a href="!PatrolClearState ?{Are you Sure|Y}"' + atagOneStyle + '><span ' + spanOneStyle + '>Clear All Relationships</span></a>'
+            +'<br><a href="!PatrolClearSngle"' + atagOneStyle + '><span ' + spanOneStyle + '>Clear a Relationships</span></a>'
             );
     },
     
@@ -292,8 +394,14 @@ var PatrolPathing = PatrolPathing || (function(){
         partolRecordSheet(recordSheetName1, recordSheetAvatar1, recordSheetAbility1);
         pathTiles = pathTilesArray;
         
-        if( ! _.has(state,'PatrolPathing')) {
-            state.PatrolPathing = [];
+        if( ! _.has(state,'PatrolPathing') || state.PatrolPathing.version !== schemaVersion) {
+            log('PatrolPathing: Resetting state');
+            state.PatrolPathing = {
+                version: schemaVersion,
+				playersCanuse_ids: false,
+                pathData: []
+			};
+            log(state.PatrolPathing);
         }
     },
 
@@ -352,6 +460,8 @@ var PatrolPathing = PatrolPathing || (function(){
             case '!patrolPathKeypad': submenuKeypad(args[1], args[2]); return;
             case '!addpath': addpath(args[1], 'Bi-Direction'); return;
             case '!pathRepresents': pathRepresents(message); return;
+            case '!PatrolClearState': clearRelationships(message); return;
+            case '!PatrolClearSngle': clearRelationshipsSingle(message); return;
         }
         return;
     },
