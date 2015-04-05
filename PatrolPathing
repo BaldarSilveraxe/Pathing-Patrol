@@ -1,7 +1,9 @@
-var PratolPathing = PratolPathing || (function(){
+var PatrolPathing = PatrolPathing || (function(){
     'use strict';
  
     var version = 0.1,
+    lastUpdate = 1428220800, //Unix timestamp
+    schemaVersion = 0.1,
     
     recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
     recordSheetName1 = 'Partol-Record-Sheet',
@@ -32,9 +34,34 @@ var PratolPathing = PratolPathing || (function(){
     
     pathTiles,
 
-    pathRepresents = function(obj) {
-        //Relate token to path (needs work)
-        sendChat('APi','Objectlogged');
+    pathRepresents = function(message) {
+        var args = message.content.split(/\s+/),
+            target,
+            selected,
+            tokenInfomration, 
+            pathStartId;
+            
+        if( 3 > args.length ){
+            log('Error: ( 3 > args.length ) @ pathRepresents = function(message)');
+            return; 
+        }
+        
+        target = getObj('graphic', args[1]);
+        selected = getObj('graphic', args[2]);
+        
+        if ((null == target) || (null == selected)) {
+            log('Error: ((null == target) || (null == selected)) @ pathRepresents = function(message)');
+            return; 
+        }
+        
+        log(target)
+        log(selected)
+        tokenInfomration = [
+            {
+                tokenId: args[1],
+            represents: ''} 
+            ];
+        pathStartId = args[2];
     },
     
     checkOffMap = function(center, middle, width, height) {
@@ -224,8 +251,8 @@ var PratolPathing = PratolPathing || (function(){
     mainmenu = function() {
         sendChat('Patrol Paths', ' ');
         sendChat('Main Menu', '/direct '
-            +'<br><a href="!patrolPathKeypad SinglePaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths</span></a>'
-            +'<br><a href="!patrolPathKeypad BiPaths"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Paths</span></a>'
+            +'<br><a href="!patrolPathKeypad SinglePaths Single"' + atagOneStyle + '><span ' + spanOneStyle + '>Single Paths</span></a>'
+            +'<br><a href="!patrolPathKeypad BiPaths Bi-Directional"' + atagOneStyle + '><span ' + spanOneStyle + '>Bi-Direction Paths</span></a>'
             );
     },
     
@@ -260,8 +287,14 @@ var PratolPathing = PratolPathing || (function(){
     },
       
     checkInstall = function() {
+        log('-=> PatrolPathing v'+version+' <=-  ['+(new Date(lastUpdate*1000))+']');
+        
         partolRecordSheet(recordSheetName1, recordSheetAvatar1, recordSheetAbility1);
         pathTiles = pathTilesArray;
+        
+        if( ! _.has(state,'PatrolPathing')) {
+            state.PatrolPathing = [];
+        }
     },
 
     handleGraphicDestroy = function(obj) {
@@ -316,9 +349,9 @@ var PratolPathing = PratolPathing || (function(){
 
         switch(args[0]) {
             case '!mainmenu': mainmenu(); return;
-            case '!patrolPathKeypad': submenuKeypad(args[1], 'Single Path Keypad'); return;
+            case '!patrolPathKeypad': submenuKeypad(args[1], args[2]); return;
             case '!addpath': addpath(args[1], 'Bi-Direction'); return;
-            case '!pathRepresents': pathRepresents(obj); return;
+            case '!pathRepresents': pathRepresents(message); return;
         }
         return;
     },
@@ -338,5 +371,5 @@ var PratolPathing = PratolPathing || (function(){
  
 on('ready',function(){
 	'use strict';
-    PratolPathing.RegisterEventHandlers();
+    PatrolPathing.RegisterEventHandlers();
 });
