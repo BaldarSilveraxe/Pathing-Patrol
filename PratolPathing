@@ -1,12 +1,12 @@
-var PratolPathing = PratolPathing || (function(){
+var PatrolPathing = PatrolPathing || (function(){
     'use strict';
  
     var version = 0.1,
     
     recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
-    recordSheetName1 = 'Partol-Record-Sheet',
+    recordSheetName1 = 'Patrol-Record-Sheet',
     recordSheetAbility1 = [
-        {istokenaction: true,   action: '!pathRepresents',     name: 'Relate to a Token'}
+        {istokenaction: true, action: '!pathRepresents', name: 'Relate to a Token'}
     ],
     recordSheetId1,
     
@@ -229,7 +229,7 @@ var PratolPathing = PratolPathing || (function(){
             );
     },
     
-    partolRecordSheet = function(name, avatar, abilities) {
+    patrolRecordSheet = function(name, avatar, abilities) {
         var controllerSheet = findObjs({ _type: 'character', name: name}), 
             controllerSheetId,
             controllerAbility;
@@ -260,7 +260,7 @@ var PratolPathing = PratolPathing || (function(){
     },
       
     checkInstall = function() {
-        partolRecordSheet(recordSheetName1, recordSheetAvatar1, recordSheetAbility1);
+        patrolRecordSheet(recordSheetName1, recordSheetAvatar1, recordSheetAbility1);
         pathTiles = pathTilesArray;
     },
 
@@ -338,5 +338,5 @@ var PratolPathing = PratolPathing || (function(){
  
 on('ready',function(){
 	'use strict';
-    PratolPathing.RegisterEventHandlers();
+    PatrolPathing.RegisterEventHandlers();
 });
