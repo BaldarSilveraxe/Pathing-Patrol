@@ -2,37 +2,37 @@ var PatrolPathing = PatrolPathing || (function(){
     'use strict';
  
     var version = 0.1,
-    lastUpdate = 1428220800, //Unix timestamp
-    schemaVersion = 0.1,
-    
-    recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
-    recordSheetName1 = 'Partol-Record-Sheet',
-    recordSheetAbility1 = [
-        {istokenaction: true,   action: '!pathRepresents @{selected|token_id} @{target|token_id}',     name: 'Relate to a Token'}
-    ],
-    recordSheetId1,
-    
-    lastTop = '',
-    lastLeft = '',
-    lastTileNumber = '',
-    lastVflip = false,
-    lastHflip = false,
-    lastRotation = '',
-    lastName = '',
-    lastId = '',
-    
-    mainDivStyle = ' style="border: 1px solid black; background-color: white; padding: 0px 0px;"',
-    tablDivStyle = ' style="display: table;"',
-    trowDivStyle = ' style="display: table-row;"',
-    cellDivStyle = ' style="display: table-cell; border-collapse: collapse; padding-left: 0px; padding-right: 0px;"',
-    atagOneStyle = ' style="border: 1px solid AliceBlue; background-color: SteelBlue; color: white;"',
-    atagTwoStyle = ' style="border: 1px solid Black; background-color: White; color: black;"',
-    atagThrStyle = ' style="border: 1px solid AliceBlue; background-color: Maroon; color: white;"',
-    imagDivStyle = ' style="padding: 0px 0px 0px 0px; outline: none; border: none;"',
-    spanOneStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
-    spanTwoStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
-    
-    pathTiles,
+        lastUpdate = 1428220800, //Unix timestamp
+        schemaVersion = 0.1,
+        
+        recordSheetAvatar1 = 'https://s3.amazonaws.com/files.d20.io/images/8614561/IBQPY21yyX08hvkDuAy-_w/thumb.jpg?1428015359',
+        recordSheetName1 = 'Partol-Record-Sheet',
+        recordSheetAbility1 = [
+            {istokenaction: true,   action: '!pathRepresents @{selected|token_id} @{target|token_id}',     name: 'Relate to a Token'}
+        ],
+        recordSheetId1,
+        
+        lastTop = '',
+        lastLeft = '',
+        lastTileNumber = '',
+        lastVflip = false,
+        lastHflip = false,
+        lastRotation = '',
+        lastName = '',
+        lastId = '',
+        
+        //mainDivStyle = ' style="border: 1px solid black; background-color: white; padding: 0px 0px;"',
+        tablDivStyle = ' style="display: table;"',
+        trowDivStyle = ' style="display: table-row;"',
+        cellDivStyle = ' style="display: table-cell; border-collapse: collapse; padding-left: 0px; padding-right: 0px;"',
+        atagOneStyle = ' style="border: 1px solid AliceBlue; background-color: SteelBlue; color: white;"',
+        atagTwoStyle = ' style="border: 1px solid Black; background-color: White; color: black;"',
+        atagThrStyle = ' style="border: 1px solid AliceBlue; background-color: Maroon; color: white;"',
+        imagDivStyle = ' style="padding: 0px 0px 0px 0px; outline: none; border: none;"',
+        spanOneStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
+        //spanTwoStyle = ' style="color:white; font-weight:normal; display:block; width: 150px;"',
+        
+        pathTiles,
     
     //delete
     showState = function() {
@@ -190,14 +190,14 @@ var PatrolPathing = PatrolPathing || (function(){
             version: schemaVersion,
             playersCanuse_ids: false,
             related: {}
-		};
+    	};
         
         log(state.PatrolPathing);
         
         gmObjects = findObjs({
             _pageid: Campaign().get('playerpageid'),
             _type: 'graphic',
-            layer: 'gmlayer',
+            layer: 'gmlayer'
         });
         
         _.each(gmObjects, function(obj) {
@@ -562,4 +562,3 @@ on('ready',function(){
 	'use strict';
     PatrolPathing.RegisterEventHandlers();
 });
-      
