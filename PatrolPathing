@@ -72,10 +72,11 @@ var PatrolPathing = PatrolPathing || (function(){
         var obj = _.first(message.selected),
             selected,
             selectedGreen,
-            pathKey,
+            isRelated,
+            related,
             targeted;
             
-        if ( null == obj) {
+        if ( !obj ) {
             sendChat('Select Alert','/direct '
                 +'<div style="padding:1px 3px;border: 1px solid #9F6000; background: #FEEFB3; color: #9F6000; font-size: 80%;">'
                 +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422879/M-oWEvMt1bhC2M-bdi28tA/thumb.png?1416499678" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
@@ -86,7 +87,7 @@ var PatrolPathing = PatrolPathing || (function(){
         selected = getObj('graphic', obj._id);
         selectedGreen = false === selected.get('status_green') ? false : true;
         
-        if ( false === selectedGreen) {
+        if ( !selectedGreen ) {
             sendChat('Select Alert','/direct '
                 +'<div style="padding:1px 3px;border: 1px solid #9F6000; background: #FEEFB3; color: #9F6000; font-size: 80%;">'
                 +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422879/M-oWEvMt1bhC2M-bdi28tA/thumb.png?1416499678" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
@@ -95,9 +96,9 @@ var PatrolPathing = PatrolPathing || (function(){
             return; 
         }
         
-        pathKey = findPathId(obj._id);
+        isRelated = findRelated(obj._id);
         
-        if ( false === pathKey) {
+        if ( !isRelated) {
             sendChat('Select Alert','/direct '
                 +'<div style="padding:1px 3px;border: 1px solid #9F6000; background: #FEEFB3; color: #9F6000; font-size: 80%;">'
                 +'<img src="https://s3.amazonaws.com/files.d20.io/images/6422879/M-oWEvMt1bhC2M-bdi28tA/thumb.png?1416499678" style="vertical-align: text-bottom; width:20px; height:20px; padding: 0px 5px;" />'
@@ -106,12 +107,14 @@ var PatrolPathing = PatrolPathing || (function(){
             selected.set('status_green', false);
             return; 
         }
+        related = findPathId(obj._id);
         
-        selected = getObj('graphic', pathKey.pathid);
-        targeted = getObj('graphic', pathKey.tokenid);
+        selected = getObj('graphic', related.pathid);
+        targeted = getObj('graphic', related.tokenid);
         selected.set('status_green', false);
         targeted.set('status_green', false);
-        delete state.PatrolPathing.related[pathKey.tokenid];
+        delete state.PatrolPathing.related[selected.get('id')];
+        delete state.PatrolPathing.related[targeted.get('id')];
     },
 
     pathRepresents = function(message) {
@@ -451,8 +454,23 @@ var PatrolPathing = PatrolPathing || (function(){
     },
 
     handleGraphicDestroy = function(obj) {
-        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')});
-
+        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')}),
+        related,
+        selected,
+        targeted;
+        
+        
+        if( 'gmlayer' === obj.get('layer') ) {
+            related = findPathId(obj.get('id'));
+            
+            selected = getObj('graphic', related.pathid);
+            targeted = getObj('graphic', related.tokenid);
+            selected.set('status_green', false);
+            targeted.set('status_green', false);
+            delete state.PatrolPathing.related[selected.get('id')];
+            delete state.PatrolPathing.related[targeted.get('id')];
+        }
+        
         //Return if its not a path tile
         if( 0 === tileData.length ) {return; }
 
@@ -470,7 +488,17 @@ var PatrolPathing = PatrolPathing || (function(){
     },
 
     handleGraphicChange = function(obj) {
-        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')});
+        var tileData = _.where(pathTiles, {url: obj.get('imgsrc')}),
+            isRelated,
+            selectedGreen;
+        
+        if( 'gmlayer' === obj.get('layer') ) {
+            isRelated = findRelated(obj.get('_id'));
+            selectedGreen = false === obj.get('status_green') ? false : true;
+            if ( selectedGreen !== isRelated ) {
+                obj.set('status_green', isRelated);
+            }
+        }
 
         if( 0 === tileData.length ) {return; }
 
@@ -529,4 +557,3 @@ on('ready',function(){
 	'use strict';
     PatrolPathing.RegisterEventHandlers();
 });
-      
