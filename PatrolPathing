@@ -462,13 +462,18 @@ var PatrolPathing = PatrolPathing || (function(){
         
         if( 'gmlayer' === obj.get('layer') ) {
             related = findPathId(obj.get('id'));
-            
             selected = getObj('graphic', related.pathid);
             targeted = getObj('graphic', related.tokenid);
-            selected.set('status_green', false);
-            targeted.set('status_green', false);
-            delete state.PatrolPathing.related[selected.get('id')];
-            delete state.PatrolPathing.related[targeted.get('id')];
+            if ( undefined !== selected ) {
+                log(selected)
+                selected.set('status_green', false);
+                delete state.PatrolPathing.related[selected.get('id')];
+            }
+            if ( undefined !== selected ) {
+                log(targeted)
+                targeted.set('status_green', false);
+                delete state.PatrolPathing.related[targeted.get('id')];
+            }
         }
         
         //Return if its not a path tile
@@ -557,3 +562,4 @@ on('ready',function(){
 	'use strict';
     PatrolPathing.RegisterEventHandlers();
 });
+      
