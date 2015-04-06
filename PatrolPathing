@@ -118,7 +118,6 @@ var PatrolPathing = PatrolPathing || (function(){
         var args = message.content.split(/\s+/),
             targeted,
             selected,
-            pairFound,
             foundInStateSelected,
             foundInStateTargeted,
             selectedGreen,
@@ -135,7 +134,7 @@ var PatrolPathing = PatrolPathing || (function(){
         if ( 0 === _.where(pathTiles, {tileNumber: selected.get('name')}).length ) {return; }
         if ( 0 !== _.where(pathTiles, {tileNumber: targeted.get('name')}).length ) {return; }
         
-        if ( (null == selected) || (null == targeted) ) {
+        if ( (!selected) || (!targeted) ) {
             //log('Error: ((null == target) || (null == selected)) @ pathRepresents = function(message)');
             return; 
         }
